@@ -1,5 +1,7 @@
 # XeWeUtils
 
+> Full reference: [`doc/`](doc/) · Agent rules: [`doc/AGENTS.md`](doc/AGENTS.md)
+
 Header-only helpers used across the XeWe libraries. No dependencies.
 
 | File (under `src/`) | Contents |
