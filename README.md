@@ -13,4 +13,5 @@ Header-only helpers used across the XeWe libraries. No dependencies.
 | `Color/Color.h` | `xewe::color`: HSV ⇄ RGB |
 | `Debug/Debug.h` | `DBG_PRINTLN` / `DBG_PRINTF`, enabled per class with `-DDEBUG_<Class>=1` |
 
-Include everything with `#include <XeWeUtils.h>`. See `examples/StringHelpers`.
+Include everything with `#include <XeWeUtils.h>`. Three examples in [`examples/`](examples/):
+`01_StringHelpers`, `02_TextLayout`, `03_TimersAndColor`.

@@ -35,3 +35,13 @@ Everything is reachable through the entry header:
 [XeWeSerial](https://github.com/xewe-labs/xewe-library-serial),
 [XeWeCli](https://github.com/xewe-labs/xewe-library-cli) and
 [XeWeOS](https://github.com/xewe-labs/xewe-library-os) all depend on this library.
+
+## Examples
+
+Three sketches, in increasing order of scope:
+
+| | | |
+|---|---|---|
+| low | [`01_StringHelpers`](../examples/01_StringHelpers) | `capitalize`, `parse_time`, `validate`, `wrap_words` |
+| mid | [`02_TextLayout`](../examples/02_TextLayout) | box and rule lines, `align_into`, `compose_box_line`, `wrap_words` vs `wrap_fixed`, `to_hex` — the primitives XeWeSerial is built from |
+| high | [`03_TimersAndColor`](../examples/03_TimersAndColor) | `AsyncTimer` fading an LED without blocking, `hsv_to_rgb`, and `LockGuard` sharing state with a second FreeRTOS task |
