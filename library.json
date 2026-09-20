@@ -1,7 +1,7 @@
 {
   "name": "XeWeUtils",
   "version": "1.0.0",
-  "description": "Header-only helpers for ESP32: string formatting, input validation, async timers, FreeRTOS mutex guard, color conversion.",
+  "description": "Header-only helpers: string formatting, input validation, async timers, color conversion, and a FreeRTOS mutex guard.",
   "keywords": [
     "other"
   ],
@@ -19,7 +19,12 @@
   "homepage": "https://github.com/xewe-labs/xewe-library-utils",
   "frameworks": "arduino",
   "platforms": [
-    "espressif32"
+    "espressif32",
+    "espressif8266",
+    "nordicnrf52",
+    "raspberrypi",
+    "renesas-ra",
+    "ststm32"
   ],
   "headers": [
     "XeWeUtils.h"

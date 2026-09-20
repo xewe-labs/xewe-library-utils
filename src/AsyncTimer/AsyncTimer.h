@@ -5,6 +5,8 @@
 
 #include <Arduino.h>
 
+#include <type_traits>
+
 #include "../Debug/Debug.h"
 
 #ifndef DEBUG_AsyncTimer

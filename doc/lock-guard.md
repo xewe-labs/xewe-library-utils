@@ -2,8 +2,13 @@
 
 `src/LockGuard/LockGuard.h` — RAII guard for a FreeRTOS mutex.
 
-This header includes `<freertos/FreeRTOS.h>` and `<freertos/semphr.h>`, so it is ESP32/FreeRTOS
-only.
+This header includes `<freertos/FreeRTOS.h>` and `<freertos/semphr.h>`, so it needs a core with
+FreeRTOS — ESP32 and the Arduino mbed cores have one.
+
+`<XeWeUtils.h>` includes this header only where `<freertos/FreeRTOS.h>` exists, so the rest of the
+library still compiles on cores without an RTOS. Nothing changes on ESP32. Include
+`"LockGuard/LockGuard.h"` directly if you would rather get a hard error on a platform that cannot
+provide it.
 
 ```cpp
 SemaphoreHandle_t mutex = xSemaphoreCreateMutex();

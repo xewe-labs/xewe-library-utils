@@ -7,7 +7,8 @@
 #include <string_view>
 #include <optional>
 #include <type_traits>
-#include <stdexcept>
+
+#include "../String/String.h"
 
 
 namespace xewe {
@@ -28,31 +29,25 @@ std::optional<T> validate(std::string_view value, LimitT min, LimitT max) {
         }
     } else if constexpr (std::is_integral_v<U> && !std::is_same_v<U, bool>) {
         // For integers, min and max denote the numeric range bounds
-        try {
-            const std::string s(value);
-            if constexpr (std::is_signed_v<U>) {
-                long long res = std::stoll(s);
-                if (res >= static_cast<long long>(min) && res <= static_cast<long long>(max)) {
-                    return static_cast<T>(res);
-                }
-            } else if constexpr (std::is_unsigned_v<U>) {
-                unsigned long long res = std::stoull(s);
-                if (res >= static_cast<unsigned long long>(min) && res <= static_cast<unsigned long long>(max)) {
-                    return static_cast<T>(res);
-                }
+        if constexpr (std::is_signed_v<U>) {
+            long long res = 0;
+            if (xewe::str::parse_int(value, res) &&
+                res >= static_cast<long long>(min) && res <= static_cast<long long>(max)) {
+                return static_cast<T>(res);
             }
-        } catch (...) {
-            // Catch std::invalid_argument or std::out_of_range
+        } else if constexpr (std::is_unsigned_v<U>) {
+            unsigned long long res = 0;
+            if (xewe::str::parse_int(value, res) &&
+                res >= static_cast<unsigned long long>(min) && res <= static_cast<unsigned long long>(max)) {
+                return static_cast<T>(res);
+            }
         }
     } else if constexpr (std::is_floating_point_v<U>) {
         // For floats, min and max denote the numeric range bounds
-        try {
-            const std::string s(value);
-            double            res = std::stod(s);
-            if (res >= static_cast<double>(min) && res <= static_cast<double>(max)) {
-                return static_cast<T>(res);
-            }
-        } catch (...) {
+        double res = 0.0;
+        if (xewe::str::parse_float(value, res) &&
+            res >= static_cast<double>(min) && res <= static_cast<double>(max)) {
+            return static_cast<T>(res);
         }
     } else {
         static_assert(always_false<U>::value, "Unsupported Validator::validate<T>() type.");

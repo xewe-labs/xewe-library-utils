@@ -51,8 +51,12 @@ string: `DBG_PRINTLN(MyClass, "started")`.
 DBG_PRINTF(cls, fmt, ...)
 ```
 
-Same prefix, then `Serial.printf(fmt, ...)`. No trailing newline is added — put `\n` in the format
-string. Requires a core with `Serial.printf`, which the ESP32 core has.
+Same prefix, then the formatted text. No trailing newline is added — put `\n` in the format
+string. Formats with `snprintf` into a stack buffer and prints the result, so it works on cores
+whose `Print` class has no `printf` (AVR, SAMD, STM32). Output longer than
+`DBG_PRINTF_BUFFER_SIZE` (128 by default) is truncated; raise it from build flags if you need
+more. For formatting outside a debug macro, use
+[`xewe::str::format`](string.md#formatting).
 
 ## Notes
 

@@ -10,9 +10,12 @@
 #include <algorithm>
 #include <limits>
 #include <type_traits>
+#include <cerrno>
 #include <cstdarg>
+#include <cstdint>
 #include <cstdio>
 #include <cstdlib>
+#include <cstring>
 
 
 #define STRINGIFY_XEWE(x) #x
@@ -439,6 +442,16 @@ inline std::string vformat(const char* fmt, va_list ap) {
 #endif
 }
 
+// printf-style formatting into a std::string. Use this instead of Serial.printf,
+// which the AVR/SAMD/STM32 Print class does not provide.
+inline std::string format(const char* fmt, ...) {
+    va_list     ap;
+    va_start(ap, fmt);
+    std::string out = vformat(fmt, ap);
+    va_end(ap);
+    return out;
+}
+
 template <typename T, typename = std::enable_if_t<std::is_integral<T>::value>>
 inline bool parse_int(std::string_view s, T& out) {
     size_t start = 0, end = s.size();
@@ -463,6 +476,27 @@ inline bool parse_int(std::string_view s, T& out) {
         out = static_cast<T>(v);
         return true;
     }
+}
+
+// Same contract as parse_int, for floating-point types: trims, requires the whole
+// token to be numeric, and reports failure instead of throwing.
+template <typename T, typename = std::enable_if_t<std::is_floating_point<T>::value>>
+inline bool parse_float(std::string_view s, T& out) {
+    size_t start = 0, end = s.size();
+    while (start < end && std::isspace(static_cast<unsigned char>(s[start]))) ++start;
+    while (end > start && std::isspace(static_cast<unsigned char>(s[end - 1]))) --end;
+    if (start >= end) return false;
+
+    std::string tmp(s.substr(start, end - start));
+    char*       pEnd = nullptr;
+    errno            = 0;
+
+    const double v = strtod(tmp.c_str(), &pEnd);
+    if (pEnd == tmp.c_str() || *pEnd != '\0') return false;
+    if (errno == ERANGE) return false;
+
+    out = static_cast<T>(v);
+    return true;
 }
 
 } // namespace xewe::str

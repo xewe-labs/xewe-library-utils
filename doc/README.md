@@ -8,10 +8,11 @@ repository, not just this folder.
 
 | Page | Covers |
 |---|---|
-| [string.md](string.md) | `xewe::str` — case, trim, split, wrap, box lines, `parse_int`, `parse_time`, `parse_day`, `parse_gmt_offset`, `to_hex`, `vformat` |
+| [string.md](string.md) | `xewe::str` — case, trim, split, wrap, box lines, `parse_int`, `parse_float`, `parse_time`, `parse_day`, `parse_gmt_offset`, `to_hex`, `format`/`vformat` |
 | [validator.md](validator.md) | `xewe::validate<T>` — parse and range-check in one call |
 | [async-timer.md](async-timer.md) | `AsyncTimer<T>` — non-blocking interpolation (**global namespace**) |
-| [lock-guard.md](lock-guard.md) | `xewe::LockGuard` — RAII guard for a FreeRTOS mutex |
+| [span.md](span.md) | `xewe::span<T>` — `std::span` on C++20, a C++17 stand-in elsewhere |
+| [lock-guard.md](lock-guard.md) | `xewe::LockGuard` — RAII guard for a FreeRTOS mutex (FreeRTOS cores only) |
 | [color.md](color.md) | `xewe::color` — HSV ⇄ RGB, all channels 0-255 |
 | [debug.md](debug.md) | `DBG_PRINTLN` / `DBG_PRINTF` and the `DEBUG_<Class>` flag convention |
 
@@ -44,4 +45,4 @@ Three sketches, in increasing order of scope:
 |---|---|---|
 | low | [`01_StringHelpers`](../examples/01_StringHelpers) | `capitalize`, `parse_time`, `validate`, `wrap_words` |
 | mid | [`02_TextLayout`](../examples/02_TextLayout) | box and rule lines, `align_into`, `compose_box_line`, `wrap_words` vs `wrap_fixed`, `to_hex` — the primitives XeWeSerial is built from |
-| high | [`03_TimersAndColor`](../examples/03_TimersAndColor) | `AsyncTimer` fading an LED without blocking, `hsv_to_rgb`, and `LockGuard` sharing state with a second FreeRTOS task |
+| high | [`03_TimersAndColor`](../examples/03_TimersAndColor) | `AsyncTimer` fading an LED without blocking, `hsv_to_rgb`, and — on a FreeRTOS core — `LockGuard` sharing state with a second task |

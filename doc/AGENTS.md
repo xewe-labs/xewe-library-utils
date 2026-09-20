@@ -11,7 +11,11 @@ file is silent: never publish, never tag or push, never commit unasked, never fl
   every dependent library links; do not introduce one to "tidy up" a large header.
 * **No dependencies.** `library.properties` has no `depends=` line and must keep none — every
   other XeWe library depends on this one, so a dependency here is a dependency everywhere. Only
-  `<Arduino.h>`, FreeRTOS headers and the C++ standard library.
+  `<Arduino.h>`, the C++ standard library, and FreeRTOS headers **behind
+  `__has_include(<freertos/FreeRTOS.h>)`**. No header reachable unconditionally from
+  `src/XeWeUtils.h` may include a FreeRTOS or vendor header — that is what lets this library
+  compile on cores without an RTOS. `src/LockGuard/LockGuard.h` is the one exception, and the
+  entry header includes it conditionally.
 * **`src/` has exactly one top-level header,** `src/XeWeUtils.h`, which only includes the files in
   its subfolders. Everything else lives in a folder per class named exactly like the class
   (`src/AsyncTimer/AsyncTimer.h`). Arduino puts every library's `src/` on the include path, so a
@@ -29,8 +33,11 @@ file is silent: never publish, never tag or push, never commit unasked, never fl
   exist; remove one only as a deliberate, announced breaking change.
 * **Debug flags default to `0`** behind `#ifndef DEBUG_<Class>`. Never enable one in the header;
   enable it from build flags.
-* **`xewe::validate` catches parse exceptions.** Do not "simplify" the `try`/`catch` away — a
-  malformed string is a normal input here, not an error path.
+* **`xewe::validate` must stay exception-free.** A malformed string is a normal input here, not
+  an error path — but it is handled by delegating to `xewe::str::parse_int` / `parse_float`, which
+  report failure by returning `false`. Never reintroduce `std::stoll`/`std::stod` or `try`/`catch`:
+  most Arduino cores compile with `-fno-exceptions`, and the host portability check in
+  `publish-arduino-library` fails the build if they come back.
 
 ## When changing this library
 

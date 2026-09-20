@@ -27,7 +27,7 @@ compiles without casting the bounds.
 | `std::string` | **string length**, inclusive | no parsing; the view is copied |
 | signed integral | numeric range, inclusive | `std::stoll` |
 | unsigned integral | numeric range, inclusive | `std::stoull` |
-| `float`, `double` | numeric range, inclusive | `std::stod` |
+| `float`, `double` | numeric range, inclusive | `xewe::str::parse_float` |
 | anything else, **including `bool`** | — | compile error |
 
 An unsupported `T` fails with `static_assert`:
@@ -35,15 +35,16 @@ An unsupported `T` fails with `static_assert`:
 
 ## Notes
 
-* **This function relies on C++ exceptions.** It calls `std::stoll`/`std::stoull`/`std::stod`
-  inside a `try`/`catch (...)` and converts a throw into `std::nullopt`. On a build with
-  exceptions disabled, a malformed input aborts instead of returning empty. The ESP32 Arduino core
-  enables exceptions by default.
-* **Trailing garbage is accepted for numbers.** `std::stoll` stops at the first non-numeric
-  character, so `validate<int>("12abc", 0, 100)` returns `12`. When you need the whole string to be
-  a number, use [`xewe::str::parse_int`](string.md#number-parsing), which rejects trailing characters.
-  The same applies to leading `+`/`-`, whitespace and `0x` prefixes, which `stoll` handles on its
-  own terms.
+* **This function is exception-free.** It delegates to
+  [`xewe::str::parse_int`](string.md#number-parsing) and `parse_float`, which report failure by
+  returning `false`. It compiles with `-fno-exceptions`, which most Arduino cores use.
+* **Behaviour change since 1.0.0: trailing garbage is now rejected.** 1.0.0 called `std::stoll`,
+  which stopped at the first non-numeric character, so `validate<int>("12abc", 0, 100)` returned
+  `12`. It now returns `std::nullopt`. `validate<int>("1.5", ...)` likewise returned `1` and now
+  returns empty. `validate` and `xewe::str::parse_int` now agree on what counts as a number.
+* **Base 10 only.** `std::stoll` accepted `0x`-prefixed forms on its own terms;
+  `validate<int>("0x1F", 0, 255)` now returns `std::nullopt`. Surrounding whitespace is still
+  trimmed and a leading `+`/`-` is still accepted.
 * **It allocates.** Each call copies the view into a `std::string` before parsing.
 * `min` and `max` are **not** swapped if you pass them inverted — an inverted range simply matches
   nothing and every call returns `std::nullopt`. (The `SerialPort` numeric prompts do swap; this

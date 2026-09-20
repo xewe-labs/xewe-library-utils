@@ -45,7 +45,7 @@ void setup() {
     Serial.println(xewe::str::repeat_pattern("-=", WIDTH).c_str());
 
     const uint8_t mac[6] = {0x24, 0x6F, 0x28, 0x01, 0xAB, 0xCD};
-    Serial.printf("to_hex: %s\n", xewe::str::to_hex(mac, sizeof(mac)).c_str());   // 246F2801ABCD
+    Serial.print(xewe::str::format("to_hex: %s\n", xewe::str::to_hex(mac, sizeof(mac)).c_str()).c_str());   // 246F2801ABCD
 }
 
 void loop() {}

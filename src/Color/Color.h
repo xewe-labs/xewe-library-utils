@@ -5,7 +5,7 @@
 
 #include <array>
 #include <algorithm> // for std::max, std::min
-#include <Arduino.h> // Assuming Serial availability
+#include <cstdint>
 
 
 namespace xewe::color {

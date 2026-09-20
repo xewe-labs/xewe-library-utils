@@ -116,8 +116,19 @@ inline std::string vformat(const char* fmt, va_list ap);
 `vsnprintf` into a `std::string`. Returns `{}` for a null `fmt` or a non-positive formatted length.
 
 **On GCC it is exact** (a two-pass `vsnprintf` sizes the result first). On any other compiler it
-falls back to a **256-byte stack buffer and truncates** silently. The ESP32 toolchain is GCC, so
-the fast path is what you get on device.
+falls back to a **256-byte stack buffer and truncates** silently. Every supported core's toolchain
+is GCC or Clang, so the fast path is what you get on device.
+
+```cpp
+inline std::string format(const char* fmt, ...);
+```
+
+The variadic form of `vformat`, with the same guarantees. **Use this instead of `Serial.printf`,**
+which the AVR, SAMD and STM32 `Print` class does not provide:
+
+```cpp
+Serial.print(xewe::str::format("hue %3u\n", hue).c_str());
+```
 
 ## Number parsing
 
@@ -134,8 +145,20 @@ Because unsigned parsing uses `strtoull`, a negative literal for an unsigned `T`
 of failing** — `parse_int<uint8_t>("-1", out)` is not the rejection you might expect. Guard the
 sign yourself, or use [`xewe::validate`](validator.md) with a `0` lower bound.
 
-Compared with `xewe::validate`: `parse_int` is stricter (no trailing garbage), allocation-free and
-exception-free; `validate` adds the range check and returns an `std::optional`.
+```cpp
+template <typename T, typename = std::enable_if_t<std::is_floating_point<T>::value>>
+inline bool parse_float(std::string_view s, T& out);
+```
+
+The same contract for floating-point types, through `strtod`. It trims, rejects trailing
+characters, and reports `false` on overflow (`ERANGE`) — which also fires on denormal
+**underflow**, so `parse_float<double>("1e-320", d)` returns `false`.
+
+Both functions copy the view into a `std::string` first, so neither is allocation-free.
+
+Compared with `xewe::validate`: these return a `bool` and leave range-checking to you; `validate`
+adds the range check and returns an `std::optional`. Both are exception-free and both reject
+trailing garbage — they agree on what counts as a number.
 
 ## Time and day parsing
 
